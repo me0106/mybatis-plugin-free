@@ -4,13 +4,8 @@ import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder
 import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiJavaFile
-import com.intellij.psi.xml.XmlElement
-import com.intellij.util.xml.DomUtil
-import com.intellij.xml.util.XmlTagUtil
-import me.nanlou.mybatis.cache.XmlMapperCache
+import me.nanlou.mybatis.utils.XmlMapperCache
 import me.nanlou.mybatis.dom.Mapper
 import me.nanlou.mybatis.utils.Icons
 

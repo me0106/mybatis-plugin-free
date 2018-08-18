@@ -8,14 +8,21 @@
     </description>
 
 
+    <depends>org.jetbrains.kotlin</depends>
+
+
     <extensions defaultExtensionNs="com.intellij">
+
+        <annotator language="JAVA"
+                   implementationClass="me.nanlou.mybatis.annotator.InterfaceAnnotator"/>
+
+
         <codeInsight.lineMarkerProvider language="JAVA"
                                         implementationClass="me.nanlou.mybatis.linemarker.JavaToXmlLineMarker"/>
         <codeInsight.lineMarkerProvider language="XML"
                                         implementationClass="me.nanlou.mybatis.linemarker.XmlToJavaLineMarker"/>
         <dom.fileDescription order="first" implementation="me.nanlou.mybatis.description.MapperDescription"/>
     </extensions>
-
     <actions>
     </actions>
 </idea-plugin>

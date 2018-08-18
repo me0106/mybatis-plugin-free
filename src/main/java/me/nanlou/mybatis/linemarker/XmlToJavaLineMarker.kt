@@ -4,9 +4,12 @@ import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder
 import com.intellij.psi.PsiElement
+import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
+import com.intellij.util.xml.DomManager
 import com.intellij.util.xml.DomUtil
 import me.nanlou.mybatis.dom.Mapper
+import me.nanlou.mybatis.dom.sub.curd.SqlElement
 import me.nanlou.mybatis.utils.Icons
 
 /**
@@ -22,50 +25,38 @@ class XmlToJavaLineMarker : RelatedItemLineMarkerProvider() {
     }
 
     override fun collectNavigationMarkers(element: PsiElement, result: MutableCollection<in RelatedItemLineMarkerInfo<PsiElement>>) {
-        element as XmlTag
-        val marker = buildNamespaceLineMaker(element) ?: return
+        if (element !is XmlTag) {
+            return
+        }
+        val mapper = DomManager.getDomManager(element.project)
+                .getFileElement(element.containingFile as XmlFile?, Mapper::class.java)?.rootElement ?: return
+        val marker = buildNamespaceLineMaker(mapper) ?: return
         result.add(marker)
-        result.addAll(buildSqlLineMarker(element))
+        result.addAll(buildSqlLineMarker(mapper))
     }
 
-
-    private fun buildNamespaceLineMaker(xmlTag: XmlTag): RelatedItemLineMarkerInfo<PsiElement>? {
-        val mapper = DomUtil.findDomElement(xmlTag, Mapper::class.java)!!
+    /**
+     * 绑定namespace->Class的跳转
+     */
+    private fun buildNamespaceLineMaker(mapper: Mapper): RelatedItemLineMarkerInfo<PsiElement>? {
         val clazz = mapper.namespace.value ?: return null
         val builder = NavigationGutterIconBuilder.create(Icons.XML_TO_JAVA_ICON)
-                .setTarget(clazz).setTooltipText("Navigate to java interface: ${clazz.name}")
-        return builder.createLineMarkerInfo(xmlTag)
+                .setTarget(clazz)
+                .setTooltipText("Navigate to java interface: ${clazz.name}")
+        return builder.createLineMarkerInfo(mapper.xmlTag)
     }
 
 
-    private fun buildSqlLineMarker(xmlTag: XmlTag): List<RelatedItemLineMarkerInfo<PsiElement>> {
+    /**
+     * 绑定sql->method的跳转
+     */
+    private fun buildSqlLineMarker(mapper: Mapper): List<RelatedItemLineMarkerInfo<PsiElement>> {
+        val list = DomUtil.getChildrenOf(mapper, SqlElement::class.java)
         val markersList = ArrayList<RelatedItemLineMarkerInfo<PsiElement>>()
-        val mapper = DomUtil.findDomElement(xmlTag, Mapper::class.java)!!
-        mapper.inserts.filter {
-            it.id.value != null
-        }.forEach {
-            val builder = NavigationGutterIconBuilder.create(Icons.XML_TO_JAVA_ICON).setTarget(it.id.value).setTooltipText("Navigate to java interface: ${it.id.value!!.name}")
-            markersList.add(builder.createLineMarkerInfo(it.id.xmlAttributeValue!!))
-            return@forEach
-        }
-        mapper.deletes.filter {
-            it.id.value != null
-        }.forEach {
-            val builder = NavigationGutterIconBuilder.create(Icons.XML_TO_JAVA_ICON).setTarget(it.id.value).setTooltipText("Navigate to java interface: ${it.id.value!!.name}")
-            markersList.add(builder.createLineMarkerInfo(it.id.xmlAttributeValue!!))
-            return@forEach
-        }
-        mapper.updates.filter {
-            it.id.value != null
-        }.forEach {
-            val builder = NavigationGutterIconBuilder.create(Icons.XML_TO_JAVA_ICON).setTarget(it.id.value).setTooltipText("Navigate to java interface: ${it.id.value!!.name}")
-            markersList.add(builder.createLineMarkerInfo(it.id.xmlAttributeValue!!))
-            return@forEach
-        }
-        mapper.selects.filter {
-            it.id.value != null
-        }.forEach {
-            val builder = NavigationGutterIconBuilder.create(Icons.XML_TO_JAVA_ICON).setTarget(it.id.value).setTooltipText("Navigate to java interface: ${it.id.value!!.name}")
+        list.filter { it.id.value != null }.forEach {
+            val builder = NavigationGutterIconBuilder.create(Icons.XML_TO_JAVA_ICON)
+                    .setTarget(it.id.value)
+                    .setTooltipText("Navigate to java method: ${it.id.value!!.name}")
             markersList.add(builder.createLineMarkerInfo(it.id.xmlAttributeValue!!))
             return@forEach
         }

@@ -17,7 +17,7 @@ public interface Id extends DomElement {
 	 * @return the value of the property child.
 	 */
 	@NotNull
-	GenericAttributeValue<PsiField> getProperty();
+	GenericAttributeValue<String> getProperty();
 
 
 	/**

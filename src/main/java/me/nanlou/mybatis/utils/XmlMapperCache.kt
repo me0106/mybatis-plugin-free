@@ -1,4 +1,4 @@
-package me.nanlou.mybatis.cache
+package me.nanlou.mybatis.utils
 
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project

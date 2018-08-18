@@ -2,10 +2,8 @@ package me.nanlou.mybatis.dom.sub.curd
 
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiMethod
-import com.intellij.util.xml.DomElement
-import com.intellij.util.xml.GenericAttributeValue
-import com.intellij.util.xml.GenericDomValue
-import com.intellij.util.xml.Required
+import com.intellij.util.xml.*
+import me.nanlou.mybatis.converter.PsiMethodConverter
 import me.nanlou.mybatis.dom.sub.*
 
 interface SqlElement : DomElement {
@@ -15,7 +13,7 @@ interface SqlElement : DomElement {
     var value: String
 
 
-    @get:Required
+    @get:Convert(PsiMethodConverter::class)
     val id: GenericAttributeValue<PsiMethod>
 
 
@@ -82,8 +80,6 @@ interface SqlElement : DomElement {
     fun addIf(): If
 
     fun addBind(): Bind
-
-
 
 
 }

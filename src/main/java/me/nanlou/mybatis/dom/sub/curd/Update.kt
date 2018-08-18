@@ -64,7 +64,7 @@ interface Update : SqlElement {
 //    val wheres: List<GenericDomValue<String>>
 
 
-    val sets: List<GenericDomValue<String>>
+//    val sets: List<GenericDomValue<String>>
 
 //
 //    val foreaches: List<Foreach>

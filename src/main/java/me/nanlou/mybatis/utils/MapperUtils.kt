@@ -2,6 +2,7 @@ package me.nanlou.mybatis.utils
 
 import com.intellij.psi.PsiFile
 import com.intellij.psi.xml.XmlFile
+import me.nanlou.mybatis.description.MapperDescription
 
 /**
  * @author me
@@ -9,12 +10,10 @@ import com.intellij.psi.xml.XmlFile
  */
 object MapperUtils {
 
-    val sqlNames = arrayOf("insert", "delete", "update", "select")
-
     fun isMapperXml(psiFile: PsiFile): Boolean {
         if (psiFile !is XmlFile) {
             return false
         }
-        return psiFile.rootTag?.name == "mapper"
+        return psiFile.rootTag?.name == MapperDescription.rootName
     }
 }
