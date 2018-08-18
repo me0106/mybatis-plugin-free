@@ -1,0 +1,21 @@
+<idea-plugin>
+    <id>me.nanlou.mybatis-plugin-free</id>
+    <name>Free Mybatis Plugin</name>
+    <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">= =</vendor>
+
+    <description>
+
+    </description>
+
+
+    <extensions defaultExtensionNs="com.intellij">
+        <codeInsight.lineMarkerProvider language="JAVA"
+                                        implementationClass="me.nanlou.mybatis.linemarker.JavaToXmlLineMarker"/>
+        <codeInsight.lineMarkerProvider language="XML"
+                                        implementationClass="me.nanlou.mybatis.linemarker.XmlToJavaLineMarker"/>
+        <dom.fileDescription order="first" implementation="me.nanlou.mybatis.description.MapperDescription"/>
+    </extensions>
+
+    <actions>
+    </actions>
+</idea-plugin>
