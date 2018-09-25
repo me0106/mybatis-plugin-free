@@ -27,10 +27,7 @@ tokens=[
 }
 
 paramFile ::=PARAM_START expression PARAM_END
-expression ::= varExpression ([COMMA (jdbcTypeExpression|javaTypeExpression | modeExpression)])
-
-
-
+expression ::= varExpression {([COMMA (jdbcTypeExpression|javaTypeExpression|modeExpression)])}
 
 varExpression ::=field|method
 jdbcTypeExpression ::=  JDBC_TYPE EQ [jdbcTypeValue]
@@ -49,6 +46,5 @@ javaTypeValue ::=IDENTIFIER(DOT IDENTIFIER)*
 paramList ::=var(COMMA var)*
 var ::= IDENTIFIER(DOT IDENTIFIER)*
 jdbcTypeValue ::= IDENTIFIER(DOT IDENTIFIER)*
-
 modeValue ::= IDENTIFIER(DOT IDENTIFIER)*
 
