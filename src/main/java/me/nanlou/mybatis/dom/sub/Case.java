@@ -4,6 +4,7 @@ package me.nanlou.mybatis.dom.sub;// Generated on Sun Aug 12 04:02:14 CST 2018
 
 import com.intellij.util.xml.*;
 import com.intellij.util.xml.DomElement;
+import me.nanlou.mybatis.dom.sub.resultmap.Constructor;
 import me.nanlou.mybatis.dom.sub.resultmap.Id;
 import me.nanlou.mybatis.dom.sub.resultmap.Result;
 import org.jetbrains.annotations.NotNull;
@@ -46,7 +47,7 @@ public interface Case extends DomElement {
 	 * @return the value of the constructor child.
 	 */
 	@NotNull
-	Constructor getConstructor();
+    Constructor getConstructor();
 
 
 	/**

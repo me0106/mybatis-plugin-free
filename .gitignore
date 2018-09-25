@@ -1,0 +1,8 @@
+# Created by .ignore support plugin (hsz.mobi)
+.gradle/
+.idea/
+build/
+out/
+src/main/kotlin/
+src/main/resources/message/
+src/test/

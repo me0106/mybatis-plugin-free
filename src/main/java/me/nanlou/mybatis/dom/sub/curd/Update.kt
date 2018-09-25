@@ -4,9 +4,7 @@ package me.nanlou.mybatis.dom.sub.curd
 // DTD/Schema  :    null
 
 
-import com.intellij.psi.PsiMethod
 import com.intellij.util.xml.*
-import com.intellij.util.xml.DomElement
 import me.nanlou.mybatis.dom.sub.*
 
 /**
@@ -14,7 +12,7 @@ import me.nanlou.mybatis.dom.sub.*
  *
  * @author me
  */
-interface Update : SqlElement {
+interface Update : CurdElement {
 
 //    @get:Required
 //    var value: String

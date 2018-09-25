@@ -6,7 +6,7 @@ import com.intellij.util.xml.*
 import me.nanlou.mybatis.converter.PsiMethodConverter
 import me.nanlou.mybatis.dom.sub.*
 
-interface SqlElement : DomElement {
+interface CurdElement : DomElement {
 
 
     @get:Required

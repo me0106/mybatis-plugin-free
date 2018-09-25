@@ -1,13 +1,29 @@
 package me.nanlou.mybatis.linemarker
 
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider
+import com.intellij.codeInsight.daemon.impl.DaemonListeners
+import com.intellij.codeInsight.daemon.impl.LineMarkersPass
+import com.intellij.codeInsight.daemon.impl.LineMarkersPassFactory
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder
+import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.editor.ex.util.EditorUtil
+import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiIdentifier
+import com.intellij.psi.PsiMethod
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.xml.XmlToken
+import com.intellij.util.xml.DomService
 import me.nanlou.mybatis.utils.XmlMapperCache
 import me.nanlou.mybatis.dom.Mapper
+import me.nanlou.mybatis.service.XmlMapperService
 import me.nanlou.mybatis.utils.Icons
+import org.jetbrains.kotlin.idea.inspections.findExistingEditor
+import org.jetbrains.kotlin.j2k.getContainingClass
 
 /**
  * @author me
@@ -16,19 +32,24 @@ import me.nanlou.mybatis.utils.Icons
 class JavaToXmlLineMarker : RelatedItemLineMarkerProvider() {
 
 
-    override fun collectNavigationMarkers(elements: MutableList<PsiElement>, result: MutableCollection<in RelatedItemLineMarkerInfo<PsiElement>>, forNavigation: Boolean) {
-        val psiClass = elements.find { it is PsiClass }
-        val list = listOf(psiClass).filter { it != null }
-        super.collectNavigationMarkers(list, result, forNavigation)
-    }
-
-    override fun collectNavigationMarkers(element: PsiElement, result: MutableCollection<in RelatedItemLineMarkerInfo<PsiElement>>) {
-        if (element !is PsiClass) {
+    override fun collectNavigationMarkers(element: PsiElement,
+                                          result: MutableCollection<in RelatedItemLineMarkerInfo<PsiElement>>) {
+        val mapperList = XmlMapperService.getInstance(element.project).findMappers(element.project).map { it.rootElement }
+        if (element !is PsiIdentifier) {
             return
         }
-        val mapper = XmlMapperCache.findMapper(element, element.project) ?: return
-        result.add(buildClassLineMarker(element, mapper))
-        result.addAll(buildMethodLineMarker(element, mapper))
+        if (element.parent is PsiClass) {
+            val clazz = element.parent as PsiClass
+            if (clazz.name == element.text) {
+                mapperList.filter { it.namespace.value == clazz }.forEach { result.add(buildClassLineMarker(clazz, it)) }
+            }
+        }
+        if (element.parent is PsiMethod) {
+            val clazz = (element.parent as PsiMethod).containingClass ?: return
+            val mapper = mapperList.find { it.namespace.value == clazz } ?: return
+            val marker = buildMethodLineMarker(element.parent as PsiMethod, mapper) ?: return
+            result.add(marker)
+        }
     }
 
 
@@ -36,10 +57,10 @@ class JavaToXmlLineMarker : RelatedItemLineMarkerProvider() {
      * 添加Class->namespace跳转
      */
     private fun buildClassLineMarker(clazz: PsiClass, mapper: Mapper): RelatedItemLineMarkerInfo<PsiElement> {
-        val file = mapper.xmlTag.containingFile
         val builder = NavigationGutterIconBuilder.create(Icons.JAVA_TO_XML_ICON)
-                .setTarget(mapper.namespace.xmlAttributeValue)
-                .setTooltipText("Navigate to  Mapper Xml:${file.name}")
+                .setTarget(mapper.xmlTag)
+                .setAlignment(GutterIconRenderer.Alignment.CENTER)
+                .setTooltipText("Navigate to  Mapper Xml:${clazz.name}")
         return builder.createLineMarkerInfo(clazz.nameIdentifier!!)
     }
 
@@ -47,17 +68,12 @@ class JavaToXmlLineMarker : RelatedItemLineMarkerProvider() {
     /**
      * 添加method->sql跳转
      */
-    private fun buildMethodLineMarker(clazz: PsiClass, mapper: Mapper): List<RelatedItemLineMarkerInfo<PsiElement>> {
-        val list = ArrayList<RelatedItemLineMarkerInfo<PsiElement>>()
-        clazz.methods.forEach { method ->
-            val targetTag = mapper.xmlTag.subTags.find { it.getAttributeValue("id") == method.name } ?: return@forEach
-            val builder = NavigationGutterIconBuilder.create(Icons.JAVA_TO_XML_ICON)
-                    .setTarget(targetTag.getAttribute("id")!!.valueElement)
-                    .setTooltipText("Navigate to  Mapper Statement: ${targetTag.value.text}")
-            list.add(builder.createLineMarkerInfo(method))
-        }
-        return list
+    private fun buildMethodLineMarker(method: PsiMethod, mapper: Mapper): RelatedItemLineMarkerInfo<PsiElement>? {
+        val targetTag = mapper.xmlTag.subTags.find { it.getAttributeValue("id") == method.name } ?: return null
+        val builder = NavigationGutterIconBuilder.create(Icons.JAVA_TO_XML_ICON)
+                .setTarget(targetTag)
+                .setAlignment(GutterIconRenderer.Alignment.CENTER)
+                .setTooltipText("Navigate to  Mapper Statement: ${targetTag.value.text}")
+        return builder.createLineMarkerInfo(method.nameIdentifier!!)
     }
-
-
 }

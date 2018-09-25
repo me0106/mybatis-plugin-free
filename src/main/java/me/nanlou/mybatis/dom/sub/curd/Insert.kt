@@ -2,16 +2,14 @@ package me.nanlou.mybatis.dom.sub.curd
 
 
 
-import com.intellij.psi.PsiMethod
 import com.intellij.util.xml.*
-import com.intellij.util.xml.DomElement
 import me.nanlou.mybatis.dom.sub.*
 
 /**
  * null:insertElemType interface.
  * @author me
  */
-interface Insert : SqlElement {
+interface Insert : CurdElement {
 
 //
 //    @get:Required

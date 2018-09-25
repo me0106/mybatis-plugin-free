@@ -4,16 +4,14 @@ package me.nanlou.mybatis.dom.sub.curd
 // DTD/Schema  :    null
 
 
-import com.intellij.psi.PsiMethod
 import com.intellij.util.xml.*
-import com.intellij.util.xml.DomElement
 import me.nanlou.mybatis.dom.sub.*
 
 /**
  * null:selectElemType interface.
  * @author me
  */
-interface Select : SqlElement {
+interface Select : CurdElement {
 
 
 /*    @get:Required

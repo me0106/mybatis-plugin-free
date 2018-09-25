@@ -20,7 +20,7 @@ class MapperDescription : DomFileDescription<Mapper>(Mapper::class.java, rootNam
         return rootName == file.rootTag?.name
     }
 
-    override fun getFileIcon(flags: Int): Icon? {
+    override fun getFileIcon(flags: Int): Icon {
         return Icons.MAPPER_ICON
     }
 

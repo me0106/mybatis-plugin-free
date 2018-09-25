@@ -21,7 +21,7 @@ compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
 intellij {
-    version 'IU-2018.2.1'
+    version 'IU-2018.2.4'
     plugins = ['Spring', 'DatabaseTools', 'Kotlin']
 }
 tasks.withType(JavaCompile) {

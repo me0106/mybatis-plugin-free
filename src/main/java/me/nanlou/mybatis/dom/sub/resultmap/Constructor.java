@@ -1,9 +1,11 @@
-package me.nanlou.mybatis.dom.sub;// Generated on Sun Aug 12 04:02:15 CST 2018
+package me.nanlou.mybatis.dom.sub.resultmap;// Generated on Sun Aug 12 04:02:15 CST 2018
 // DTD/Schema  :    null
 
 
 import com.intellij.util.xml.*;
 import com.intellij.util.xml.DomElement;
+import me.nanlou.mybatis.dom.sub.Arg;
+import me.nanlou.mybatis.dom.sub.IdArg;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

@@ -3,14 +3,14 @@ package me.nanlou.mybatis.linemarker
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder
+import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.psi.PsiElement
-import com.intellij.psi.xml.XmlFile
-import com.intellij.psi.xml.XmlTag
-import com.intellij.util.xml.DomManager
+import com.intellij.psi.xml.*
 import com.intellij.util.xml.DomUtil
 import me.nanlou.mybatis.dom.Mapper
-import me.nanlou.mybatis.dom.sub.curd.SqlElement
-import me.nanlou.mybatis.utils.Icons
+import me.nanlou.mybatis.dom.sub.curd.CurdElement
+import me.nanlou.mybatis.utils.*
+import java.lang.ClassCastException
 
 /**
  * @author me
@@ -18,48 +18,47 @@ import me.nanlou.mybatis.utils.Icons
  */
 class XmlToJavaLineMarker : RelatedItemLineMarkerProvider() {
 
-    override fun collectNavigationMarkers(elements: MutableList<PsiElement>, result: MutableCollection<in RelatedItemLineMarkerInfo<PsiElement>>, forNavigation: Boolean) {
-        val xmlTag = elements.find { it is XmlTag && it.name == "mapper" }
-        val list = listOf(xmlTag).filter { it != null }
-        super.collectNavigationMarkers(list, result, forNavigation)
+    companion object {
+        private val list = arrayOf("select", "mapper", "delete", "update", "insert")
     }
 
     override fun collectNavigationMarkers(element: PsiElement, result: MutableCollection<in RelatedItemLineMarkerInfo<PsiElement>>) {
-        if (element !is XmlTag) {
+        if (MapperUtils.isNotMapperXml(element.containingFile)) {
             return
         }
-        val mapper = DomManager.getDomManager(element.project)
-                .getFileElement(element.containingFile as XmlFile?, Mapper::class.java)?.rootElement ?: return
-        val marker = buildNamespaceLineMaker(mapper) ?: return
-        result.add(marker)
-        result.addAll(buildSqlLineMarker(mapper))
+        val mapper = MyDomManager.getDomModel(element.containingFile as XmlFile, Mapper::class.java) ?: return
+        val list = DomUtil.getChildrenOf(mapper, CurdElement::class.java)
+        try {
+            result.addWithReplace(buildNamespaceLineMaker(mapper, mapper.xmlTag.children[1] as XmlToken))
+            list.map { buildSqlLineMarker(it, it.xmlTag.children[1] as XmlToken) }.forEach { result.addWithReplace(it) }
+        } catch (e: ClassCastException) {
+
+        }
+
     }
 
     /**
      * 绑定namespace->Class的跳转
      */
-    private fun buildNamespaceLineMaker(mapper: Mapper): RelatedItemLineMarkerInfo<PsiElement>? {
+    private fun buildNamespaceLineMaker(mapper: Mapper, xmlToken: XmlToken): RelatedItemLineMarkerInfo<PsiElement>? {
         val clazz = mapper.namespace.value ?: return null
         val builder = NavigationGutterIconBuilder.create(Icons.XML_TO_JAVA_ICON)
-                .setTarget(clazz)
+                .setTarget(clazz.nameIdentifier)
+                .setAlignment(GutterIconRenderer.Alignment.CENTER)
                 .setTooltipText("Navigate to java interface: ${clazz.name}")
-        return builder.createLineMarkerInfo(mapper.xmlTag)
+        return builder.createLineMarkerInfo(xmlToken)
     }
 
 
     /**
      * 绑定sql->method的跳转
      */
-    private fun buildSqlLineMarker(mapper: Mapper): List<RelatedItemLineMarkerInfo<PsiElement>> {
-        val list = DomUtil.getChildrenOf(mapper, SqlElement::class.java)
-        val markersList = ArrayList<RelatedItemLineMarkerInfo<PsiElement>>()
-        list.filter { it.id.value != null }.forEach {
-            val builder = NavigationGutterIconBuilder.create(Icons.XML_TO_JAVA_ICON)
-                    .setTarget(it.id.value)
-                    .setTooltipText("Navigate to java method: ${it.id.value!!.name}")
-            markersList.add(builder.createLineMarkerInfo(it.id.xmlAttributeValue!!))
-            return@forEach
-        }
-        return markersList
+    private fun buildSqlLineMarker(element: CurdElement, xmlToken: XmlToken): RelatedItemLineMarkerInfo<PsiElement>? {
+        val psiMethod = element.id.value ?: return null
+        return NavigationGutterIconBuilder.create(Icons.XML_TO_JAVA_ICON)
+                .setTarget(psiMethod.nameIdentifier)
+                .setAlignment(GutterIconRenderer.Alignment.CENTER)
+                .setTooltipText("Navigate to java method: ${psiMethod.nameIdentifier}")
+                .createLineMarkerInfo(xmlToken)
     }
 }

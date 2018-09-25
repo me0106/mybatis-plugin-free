@@ -1,27 +1,44 @@
 <idea-plugin>
     <id>me.nanlou.mybatis-plugin-free</id>
     <name>Free Mybatis Plugin</name>
-    <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">= =</vendor>
-
+    <vendor email="admin@zhouxi.me" url="http://zhouxi.me">= =</vendor>
     <description>
-
     </description>
-
-
     <depends>org.jetbrains.kotlin</depends>
-
-
+    <depends>com.intellij.database</depends>
     <extensions defaultExtensionNs="com.intellij">
+        <fileTypeFactory implementation="me.nanlou.param.ParamFileTypeFactory"/>
 
+        <lang.parserDefinition language="Param" implementationClass="me.nanlou.param.parser.ParamParserDefinition"/>
+        <lang.syntaxHighlighterFactory language="Param"
+                                       implementationClass="me.nanlou.param.heightlight.ParamSyntaxHighlighterFactory"/>
+        <colorSettingsPage implementation="me.nanlou.param.heightlight.ParamColorSettingsPage"/>
+        <completion.contributor language="Param"
+                                implementationClass="me.nanlou.param.completion.ParamEnumCompletionContributor"/>
+        <completion.contributor language="Param"
+                                implementationClass="me.nanlou.param.completion.JavaTypeCompletionContributor"/>
+        <completion.contributor language="Param"
+                                implementationClass="me.nanlou.param.completion.ParamCompletionContributor"/>
+
+        <multiHostInjector implementation="me.nanlou.mybatis.ParamInjector"/>
+
+        <!--Interface错误检查-->
         <annotator language="JAVA"
                    implementationClass="me.nanlou.mybatis.annotator.InterfaceAnnotator"/>
+        <!--Mapper.xml错误检查-->
+        <annotator language="XML"
+                   implementationClass="me.nanlou.mybatis.annotator.XmlMapperAnnotator"/>
 
-
+        <!--  Interface=>Mapper.xml  -->
         <codeInsight.lineMarkerProvider language="JAVA"
                                         implementationClass="me.nanlou.mybatis.linemarker.JavaToXmlLineMarker"/>
+
+        <!-- Mapper.xml=>Interface  -->
         <codeInsight.lineMarkerProvider language="XML"
                                         implementationClass="me.nanlou.mybatis.linemarker.XmlToJavaLineMarker"/>
+        <!--Mapper.xml Registry-->
         <dom.fileDescription order="first" implementation="me.nanlou.mybatis.description.MapperDescription"/>
+        <projectService serviceImplementation="me.nanlou.mybatis.service.XmlMapperService"/>
     </extensions>
     <actions>
     </actions>

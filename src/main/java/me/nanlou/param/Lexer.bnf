@@ -1,0 +1,54 @@
+{
+parserClass="me.nanlou.param.parser.ParamParser"
+extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
+psiClassPrefix="Param"
+psiImplClassSuffix="Impl"
+psiPackage="me.nanlou.param.psi"
+psiImplPackage="me.nanlou.param.psi.impl"
+elementTypeHolderClass="me.nanlou.param.psi.ParamTypes"
+elementTypeClass="me.nanlou.param.ParamElementType"
+tokenTypeClass="me.nanlou.param.ParamTokenType"
+psiImplUtilClass="me.nanlou.param.ParamPsiImplUtil"
+tokens=[
+    //匹配普通标识符
+    IDENTIFIER="regexp:[a-zA-Z_][a-zA-Z0-9_.]*"
+    DOT = '.'
+    AT = '@'
+    COMMA = ','
+    LEFT_BRACKETS='('
+    RIGHT_BRACKETS=')'
+    EQ = '='
+    JAVA_TYPE = 'javaType'
+    JDBC_TYPE = 'jdbcType'
+    MODE = 'mode'
+    PARAM_START = 'regexp:[$#]\{'
+    PARAM_END = '}'
+]
+}
+
+paramFile ::=PARAM_START expression PARAM_END
+expression ::= varExpression ([COMMA (jdbcTypeExpression|javaTypeExpression | modeExpression)])
+
+
+
+
+varExpression ::=field|method
+jdbcTypeExpression ::=  JDBC_TYPE EQ [jdbcTypeValue]
+javaTypeExpression ::=  JAVA_TYPE EQ [javaTypeValue]
+modeExpression ::=  MODE EQ [modeValue]
+
+method ::=AT className AT methodName LEFT_BRACKETS [paramList] RIGHT_BRACKETS
+field ::=IDENTIFIER(DOT IDENTIFIER)*{
+    mixin="me.nanlou.param.ParamNamedElementImpl"
+    implements="me.nanlou.param.ParamNamedElement"
+    methods=[getKey getValue getName setName getNameIdentifier]
+}
+className ::=IDENTIFIER(DOT IDENTIFIER)*
+methodName ::=IDENTIFIER(DOT IDENTIFIER)*
+javaTypeValue ::=IDENTIFIER(DOT IDENTIFIER)*
+paramList ::=var(COMMA var)*
+var ::= IDENTIFIER(DOT IDENTIFIER)*
+jdbcTypeValue ::= IDENTIFIER(DOT IDENTIFIER)*
+
+modeValue ::= IDENTIFIER(DOT IDENTIFIER)*
+

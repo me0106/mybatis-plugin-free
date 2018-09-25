@@ -16,4 +16,9 @@ object MapperUtils {
         }
         return psiFile.rootTag?.name == MapperDescription.rootName
     }
+
+
+    fun isNotMapperXml(psiFile: PsiFile): Boolean {
+        return !isMapperXml(psiFile)
+    }
 }
