@@ -28,21 +28,21 @@ public class ParamExpressionImpl extends ASTWrapperPsiElement implements ParamEx
   }
 
   @Override
-  @Nullable
-  public ParamJavaTypeExpression getJavaTypeExpression() {
-    return findChildByClass(ParamJavaTypeExpression.class);
+  @NotNull
+  public List<ParamJavaTypeExpression> getJavaTypeExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, ParamJavaTypeExpression.class);
   }
 
   @Override
-  @Nullable
-  public ParamJdbcTypeExpression getJdbcTypeExpression() {
-    return findChildByClass(ParamJdbcTypeExpression.class);
+  @NotNull
+  public List<ParamJdbcTypeExpression> getJdbcTypeExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, ParamJdbcTypeExpression.class);
   }
 
   @Override
-  @Nullable
-  public ParamModeExpression getModeExpression() {
-    return findChildByClass(ParamModeExpression.class);
+  @NotNull
+  public List<ParamModeExpression> getModeExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, ParamModeExpression.class);
   }
 
   @Override

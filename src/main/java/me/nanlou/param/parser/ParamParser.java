@@ -29,8 +29,8 @@ public class ParamParser implements PsiParser, LightPsiParser {
     else if (t == EXPRESSION) {
       r = expression(b, 0);
     }
-    else if (t == FIELD_NAME) {
-      r = fieldName(b, 0);
+    else if (t == FIELD) {
+      r = field(b, 0);
     }
     else if (t == JAVA_TYPE_EXPRESSION) {
       r = javaTypeExpression(b, 0);
@@ -44,8 +44,8 @@ public class ParamParser implements PsiParser, LightPsiParser {
     else if (t == JDBC_TYPE_VALUE) {
       r = jdbcTypeValue(b, 0);
     }
-    else if (t == METHOD_CALL) {
-      r = methodCall(b, 0);
+    else if (t == METHOD) {
+      r = method(b, 0);
     }
     else if (t == METHOD_NAME) {
       r = methodName(b, 0);
@@ -110,100 +110,77 @@ public class ParamParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // varExpression ([COMMA jdbcTypeExpression])([COMMA javaTypeExpression])([COMMA modeExpression])
+  // varExpression {COMMA (jdbcTypeExpression|javaTypeExpression|modeExpression)}*
   public static boolean expression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "expression")) return false;
+    if (!nextTokenIs(b, "<expression>", AT, IDENTIFIER)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, EXPRESSION, "<expression>");
     r = varExpression(b, l + 1);
     r = r && expression_1(b, l + 1);
-    r = r && expression_2(b, l + 1);
-    r = r && expression_3(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
 
-  // [COMMA jdbcTypeExpression]
+  // {COMMA (jdbcTypeExpression|javaTypeExpression|modeExpression)}*
   private static boolean expression_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "expression_1")) return false;
-    expression_1_0(b, l + 1);
+    while (true) {
+      int c = current_position_(b);
+      if (!expression_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "expression_1", c)) break;
+    }
     return true;
   }
 
-  // COMMA jdbcTypeExpression
+  // COMMA (jdbcTypeExpression|javaTypeExpression|modeExpression)
   private static boolean expression_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "expression_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, COMMA);
-    r = r && jdbcTypeExpression(b, l + 1);
+    r = r && expression_1_0_1(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
-  // [COMMA javaTypeExpression]
-  private static boolean expression_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "expression_2")) return false;
-    expression_2_0(b, l + 1);
-    return true;
-  }
-
-  // COMMA javaTypeExpression
-  private static boolean expression_2_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "expression_2_0")) return false;
+  // jdbcTypeExpression|javaTypeExpression|modeExpression
+  private static boolean expression_1_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "expression_1_0_1")) return false;
     boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, COMMA);
-    r = r && javaTypeExpression(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // [COMMA modeExpression]
-  private static boolean expression_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "expression_3")) return false;
-    expression_3_0(b, l + 1);
-    return true;
-  }
-
-  // COMMA modeExpression
-  private static boolean expression_3_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "expression_3_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, COMMA);
-    r = r && modeExpression(b, l + 1);
-    exit_section_(b, m, null, r);
+    r = jdbcTypeExpression(b, l + 1);
+    if (!r) r = javaTypeExpression(b, l + 1);
+    if (!r) r = modeExpression(b, l + 1);
     return r;
   }
 
   /* ********************************************************** */
   // IDENTIFIER(DOT IDENTIFIER)*
-  public static boolean fieldName(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "fieldName")) return false;
+  public static boolean field(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "field")) return false;
     if (!nextTokenIs(b, IDENTIFIER)) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, IDENTIFIER);
-    r = r && fieldName_1(b, l + 1);
-    exit_section_(b, m, FIELD_NAME, r);
+    r = r && field_1(b, l + 1);
+    exit_section_(b, m, FIELD, r);
     return r;
   }
 
   // (DOT IDENTIFIER)*
-  private static boolean fieldName_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "fieldName_1")) return false;
+  private static boolean field_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "field_1")) return false;
     while (true) {
       int c = current_position_(b);
-      if (!fieldName_1_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "fieldName_1", c)) break;
+      if (!field_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "field_1", c)) break;
     }
     return true;
   }
 
   // DOT IDENTIFIER
-  private static boolean fieldName_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "fieldName_1_0")) return false;
+  private static boolean field_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "field_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeTokens(b, 0, DOT, IDENTIFIER);
@@ -321,8 +298,8 @@ public class ParamParser implements PsiParser, LightPsiParser {
 
   /* ********************************************************** */
   // AT className AT methodName LEFT_BRACKETS [paramList] RIGHT_BRACKETS
-  public static boolean methodCall(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "methodCall")) return false;
+  public static boolean method(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "method")) return false;
     if (!nextTokenIs(b, AT)) return false;
     boolean r;
     Marker m = enter_section_(b);
@@ -331,15 +308,15 @@ public class ParamParser implements PsiParser, LightPsiParser {
     r = r && consumeToken(b, AT);
     r = r && methodName(b, l + 1);
     r = r && consumeToken(b, LEFT_BRACKETS);
-    r = r && methodCall_5(b, l + 1);
+    r = r && method_5(b, l + 1);
     r = r && consumeToken(b, RIGHT_BRACKETS);
-    exit_section_(b, m, METHOD_CALL, r);
+    exit_section_(b, m, METHOD, r);
     return r;
   }
 
   // [paramList]
-  private static boolean methodCall_5(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "methodCall_5")) return false;
+  private static boolean method_5(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "method_5")) return false;
     paramList(b, l + 1);
     return true;
   }
@@ -516,21 +493,15 @@ public class ParamParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // [fieldName|methodCall]
+  // field|method
   public static boolean varExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varExpression")) return false;
-    Marker m = enter_section_(b, l, _NONE_, VAR_EXPRESSION, "<var expression>");
-    varExpression_0(b, l + 1);
-    exit_section_(b, l, m, true, false, null);
-    return true;
-  }
-
-  // fieldName|methodCall
-  private static boolean varExpression_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "varExpression_0")) return false;
+    if (!nextTokenIs(b, "<var expression>", AT, IDENTIFIER)) return false;
     boolean r;
-    r = fieldName(b, l + 1);
-    if (!r) r = methodCall(b, l + 1);
+    Marker m = enter_section_(b, l, _NONE_, VAR_EXPRESSION, "<var expression>");
+    r = field(b, l + 1);
+    if (!r) r = method(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
     return r;
   }
 

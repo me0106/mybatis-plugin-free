@@ -29,14 +29,14 @@ public class ParamVarExpressionImpl extends ASTWrapperPsiElement implements Para
 
   @Override
   @Nullable
-  public ParamFieldName getFieldName() {
-    return findChildByClass(ParamFieldName.class);
+  public ParamField getField() {
+    return findChildByClass(ParamField.class);
   }
 
   @Override
   @Nullable
-  public ParamMethodCall getMethodCall() {
-    return findChildByClass(ParamMethodCall.class);
+  public ParamMethod getMethod() {
+    return findChildByClass(ParamMethod.class);
   }
 
 }

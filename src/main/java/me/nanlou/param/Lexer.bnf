@@ -27,13 +27,12 @@ tokens=[
 }
 
 paramFile ::=PARAM_START expression PARAM_END
-expression ::= varExpression {([COMMA (jdbcTypeExpression|javaTypeExpression|modeExpression)])}
+expression ::= varExpression {COMMA (jdbcTypeExpression|javaTypeExpression|modeExpression)}*
 
 varExpression ::=field|method
 jdbcTypeExpression ::=  JDBC_TYPE EQ [jdbcTypeValue]
 javaTypeExpression ::=  JAVA_TYPE EQ [javaTypeValue]
 modeExpression ::=  MODE EQ [modeValue]
-
 method ::=AT className AT methodName LEFT_BRACKETS [paramList] RIGHT_BRACKETS
 field ::=IDENTIFIER(DOT IDENTIFIER)*{
     mixin="me.nanlou.param.ParamNamedElementImpl"

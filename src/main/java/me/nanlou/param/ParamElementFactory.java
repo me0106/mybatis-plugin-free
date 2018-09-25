@@ -2,7 +2,7 @@ package me.nanlou.param;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFileFactory;
-import me.nanlou.param.psi.ParamFieldName;
+import me.nanlou.param.psi.ParamField;
 
 /**
  * @author me
@@ -11,9 +11,9 @@ import me.nanlou.param.psi.ParamFieldName;
 public class ParamElementFactory {
 
 
-    public static ParamFieldName createProperty(Project project, String name) {
+    public static ParamField createProperty(Project project, String name) {
         final ParamFile file = createFile(project, name);
-        return (ParamFieldName) file.getFirstChild();
+        return (ParamField) file.getFirstChild();
     }
 
     public static ParamFile createFile(Project project, String text) {

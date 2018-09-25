@@ -16,7 +16,7 @@ public class ParamVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitFieldName(@NotNull ParamFieldName o) {
+  public void visitField(@NotNull ParamField o) {
     visitNamedElement(o);
   }
 
@@ -36,7 +36,7 @@ public class ParamVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
-  public void visitMethodCall(@NotNull ParamMethodCall o) {
+  public void visitMethod(@NotNull ParamMethod o) {
     visitPsiElement(o);
   }
 

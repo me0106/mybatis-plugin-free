@@ -2,7 +2,7 @@ package me.nanlou.param;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import me.nanlou.param.psi.ParamFieldName;
+import me.nanlou.param.psi.ParamField;
 import me.nanlou.param.psi.ParamTypes;
 
 /**
@@ -12,12 +12,12 @@ import me.nanlou.param.psi.ParamTypes;
 public class ParamPsiImplUtil {
 //getKey getValue getName setName getNameIdentifier
 
-    public static String getName(ParamFieldName element) {
+    public static String getName(ParamField element) {
         return getKey(element);
     }
 
-    public static String getKey(ParamFieldName element) {
-        ASTNode nameNode = element.getNode().findChildByType(ParamTypes.FIELD_NAME);
+    public static String getKey(ParamField element) {
+        ASTNode nameNode = element.getNode().findChildByType(ParamTypes.FIELD);
         if (nameNode != null) {
             return nameNode.getText();
         } else {
@@ -25,18 +25,18 @@ public class ParamPsiImplUtil {
         }
     }
 
-    public static PsiElement setName(ParamFieldName element, String newName) {
-        ASTNode nameNode = element.getNode().findChildByType(ParamTypes.FIELD_NAME);
+    public static PsiElement setName(ParamField element, String newName) {
+        ASTNode nameNode = element.getNode().findChildByType(ParamTypes.FIELD);
         if (nameNode != null) {
-            ParamFieldName name = ParamElementFactory.createProperty(element.getProject(), newName);
+            ParamField name = ParamElementFactory.createProperty(element.getProject(), newName);
             ASTNode newNameNode = name.getFirstChild().getNode();
             element.getNode().replaceChild(nameNode, newNameNode);
         }
         return element;
     }
 
-    public static PsiElement getNameIdentifier(ParamFieldName element) {
-        ASTNode nameNode = element.getNode().findChildByType(ParamTypes.FIELD_NAME);
+    public static PsiElement getNameIdentifier(ParamField element) {
+        ASTNode nameNode = element.getNode().findChildByType(ParamTypes.FIELD);
         if (nameNode != null) {
             return nameNode.getPsi();
         } else {

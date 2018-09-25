@@ -25,7 +25,8 @@ import static me.nanlou.param.psi.ParamTypes.*;
 EOL=\R
 WHITE_SPACE=\s+
 
-IDENTIFIER=[a-zA-Z_][a-zA-Z0-9_]*
+IDENTIFIER=[a-zA-Z_][a-zA-Z0-9_.]*
+PARAM_START=[$#]\{
 
 %%
 <YYINITIAL> {
@@ -40,10 +41,10 @@ IDENTIFIER=[a-zA-Z_][a-zA-Z0-9_]*
   "javaType"         { return JAVA_TYPE; }
   "jdbcType"         { return JDBC_TYPE; }
   "mode"             { return MODE; }
-  "#{"               { return PARAM_START; }
   "}"                { return PARAM_END; }
 
   {IDENTIFIER}       { return IDENTIFIER; }
+  {PARAM_START}      { return PARAM_START; }
 
 }
 

@@ -8,9 +8,9 @@ import com.intellij.psi.PsiElement;
 public interface ParamVarExpression extends PsiElement {
 
   @Nullable
-  ParamFieldName getFieldName();
+  ParamField getField();
 
   @Nullable
-  ParamMethodCall getMethodCall();
+  ParamMethod getMethod();
 
 }

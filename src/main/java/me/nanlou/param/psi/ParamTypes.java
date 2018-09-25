@@ -12,12 +12,12 @@ public interface ParamTypes {
 
   IElementType CLASS_NAME = new ParamElementType("CLASS_NAME");
   IElementType EXPRESSION = new ParamElementType("EXPRESSION");
-  IElementType FIELD_NAME = new ParamElementType("FIELD_NAME");
+  IElementType FIELD = new ParamElementType("FIELD");
   IElementType JAVA_TYPE_EXPRESSION = new ParamElementType("JAVA_TYPE_EXPRESSION");
   IElementType JAVA_TYPE_VALUE = new ParamElementType("JAVA_TYPE_VALUE");
   IElementType JDBC_TYPE_EXPRESSION = new ParamElementType("JDBC_TYPE_EXPRESSION");
   IElementType JDBC_TYPE_VALUE = new ParamElementType("JDBC_TYPE_VALUE");
-  IElementType METHOD_CALL = new ParamElementType("METHOD_CALL");
+  IElementType METHOD = new ParamElementType("METHOD");
   IElementType METHOD_NAME = new ParamElementType("METHOD_NAME");
   IElementType MODE_EXPRESSION = new ParamElementType("MODE_EXPRESSION");
   IElementType MODE_VALUE = new ParamElementType("MODE_VALUE");
@@ -35,7 +35,7 @@ public interface ParamTypes {
   IElementType LEFT_BRACKETS = new ParamTokenType("(");
   IElementType MODE = new ParamTokenType("mode");
   IElementType PARAM_END = new ParamTokenType("}");
-  IElementType PARAM_START = new ParamTokenType("#{");
+  IElementType PARAM_START = new ParamTokenType("PARAM_START");
   IElementType RIGHT_BRACKETS = new ParamTokenType(")");
 
   class Factory {
@@ -47,8 +47,8 @@ public interface ParamTypes {
       else if (type == EXPRESSION) {
         return new ParamExpressionImpl(node);
       }
-      else if (type == FIELD_NAME) {
-        return new ParamFieldNameImpl(node);
+      else if (type == FIELD) {
+        return new ParamFieldImpl(node);
       }
       else if (type == JAVA_TYPE_EXPRESSION) {
         return new ParamJavaTypeExpressionImpl(node);
@@ -62,8 +62,8 @@ public interface ParamTypes {
       else if (type == JDBC_TYPE_VALUE) {
         return new ParamJdbcTypeValueImpl(node);
       }
-      else if (type == METHOD_CALL) {
-        return new ParamMethodCallImpl(node);
+      else if (type == METHOD) {
+        return new ParamMethodImpl(node);
       }
       else if (type == METHOD_NAME) {
         return new ParamMethodNameImpl(node);

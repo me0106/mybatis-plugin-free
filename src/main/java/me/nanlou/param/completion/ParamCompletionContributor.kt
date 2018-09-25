@@ -12,7 +12,7 @@ import com.intellij.util.ProcessingContext
 import me.nanlou.mybatis.utils.findSqlParamNameMap
 import me.nanlou.mybatis.utils.findXmlTag
 import me.nanlou.param.ParamLanguage
-import me.nanlou.param.psi.ParamFieldName
+import me.nanlou.param.psi.ParamField
 import me.nanlou.param.psi.ParamTypes
 import javax.swing.Icon
 
@@ -26,7 +26,7 @@ class ParamCompletionContributor : CompletionContributor() {
     }
     private fun init() {
         val pattern = PlatformPatterns.psiElement(ParamTypes.IDENTIFIER)
-                .withParent(PlatformPatterns.psiElement(ParamFieldName::class.java))
+                .withParent(PlatformPatterns.psiElement(ParamField::class.java))
                 .withLanguage(ParamLanguage.INSTANCE)
         extend(CompletionType.BASIC, pattern, Provider())
     }

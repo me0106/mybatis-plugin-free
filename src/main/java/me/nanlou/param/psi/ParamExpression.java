@@ -7,14 +7,14 @@ import com.intellij.psi.PsiElement;
 
 public interface ParamExpression extends PsiElement {
 
-  @Nullable
-  ParamJavaTypeExpression getJavaTypeExpression();
+  @NotNull
+  List<ParamJavaTypeExpression> getJavaTypeExpressionList();
 
-  @Nullable
-  ParamJdbcTypeExpression getJdbcTypeExpression();
+  @NotNull
+  List<ParamJdbcTypeExpression> getJdbcTypeExpressionList();
 
-  @Nullable
-  ParamModeExpression getModeExpression();
+  @NotNull
+  List<ParamModeExpression> getModeExpressionList();
 
   @NotNull
   ParamVarExpression getVarExpression();
