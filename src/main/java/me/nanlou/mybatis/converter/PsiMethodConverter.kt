@@ -4,7 +4,9 @@ import com.intellij.psi.PsiMethod
 import com.intellij.util.xml.ConvertContext
 import com.intellij.util.xml.Converter
 import com.intellij.util.xml.DomManager
+import com.intellij.util.xml.DomUtil
 import me.nanlou.mybatis.dom.Mapper
+import me.nanlou.mybatis.utils.MyDomManager
 
 
 /**
@@ -17,9 +19,11 @@ class PsiMethodConverter : Converter<PsiMethod>() {
     }
 
     override fun fromString(s: String?, context: ConvertContext?): PsiMethod? {
-        val mapper = DomManager
-                .getDomManager(context?.project)
-                .getFileElement(context?.file, Mapper::class.java)?.rootElement ?: return null
+
+        val mapper = MyDomManager.getDomModel(context!!.file, Mapper::class.java) ?: return null
+//                DomManager
+//                .getDomManager(context?.project)
+//                .getFileElement(context?.file, Mapper::class.java)?.rootElement ?: return null
         return mapper.namespace.value?.findMethodsByName(s, false)?.getOrNull(0)
     }
 }

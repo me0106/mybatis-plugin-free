@@ -1,20 +1,19 @@
-package me.nanlou.mybatis.annotator
+package me.nanlou.mybatis.inspection.deprecated
 
 import com.intellij.codeInsight.daemon.impl.AnnotationHolderImpl
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiJavaFile
 import com.intellij.util.xml.DomUtil
 import me.nanlou.mybatis.dom.sub.curd.CurdElement
 import me.nanlou.mybatis.service.XmlMapperService
-import me.nanlou.mybatis.utils.XmlMapperCache
 
 /**
  * @author me
  * @date 2018-08-18 15:06
  */
+@Deprecated("")
 class InterfaceAnnotator : Annotator {
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {
         if (element !is PsiJavaFile) {

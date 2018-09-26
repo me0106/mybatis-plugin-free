@@ -21,6 +21,8 @@ import org.jf.util.StringUtils
 import java.util.regex.Pattern
 
 /**
+ *
+ * ParamLanguage Inject
  * @author me
  * @date 2018-09-24 16:47
  */

@@ -1,6 +1,7 @@
 package me.nanlou.mybatis.linemarker
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
+import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider
 import com.intellij.codeInsight.daemon.impl.DaemonListeners
@@ -46,9 +47,9 @@ class JavaToXmlLineMarker : RelatedItemLineMarkerProvider() {
         }
         if (element.parent is PsiMethod) {
             val clazz = (element.parent as PsiMethod).containingClass ?: return
-            val mapper = mapperList.find { it.namespace.value == clazz } ?: return
-            val marker = buildMethodLineMarker(element.parent as PsiMethod, mapper) ?: return
-            result.add(marker)
+            mapperList.asSequence().filter { it.namespace.value == clazz }
+                    .map { buildMethodLineMarker(element.parent as PsiMethod, it) }.toList()
+                    .forEach { result.addAll(it) }
         }
     }
 
@@ -68,12 +69,14 @@ class JavaToXmlLineMarker : RelatedItemLineMarkerProvider() {
     /**
      * 添加method->sql跳转
      */
-    private fun buildMethodLineMarker(method: PsiMethod, mapper: Mapper): RelatedItemLineMarkerInfo<PsiElement>? {
-        val targetTag = mapper.xmlTag.subTags.find { it.getAttributeValue("id") == method.name } ?: return null
-        val builder = NavigationGutterIconBuilder.create(Icons.JAVA_TO_XML_ICON)
-                .setTarget(targetTag)
-                .setAlignment(GutterIconRenderer.Alignment.CENTER)
-                .setTooltipText("Navigate to  Mapper Statement: ${targetTag.value.text}")
-        return builder.createLineMarkerInfo(method.nameIdentifier!!)
+    private fun buildMethodLineMarker(method: PsiMethod, mapper: Mapper): List<RelatedItemLineMarkerInfo<PsiElement>> {
+        val list = mapper.xmlTag.subTags.filter { it.getAttributeValue("id") == method.name }
+        return list.map {
+            NavigationGutterIconBuilder.create(Icons.JAVA_TO_XML_ICON)
+                    .setTarget(it)
+                    .setAlignment(GutterIconRenderer.Alignment.CENTER)
+                    .setTooltipText("Navigate to  Mapper Statement: ${it.value.text}")
+                    .createLineMarkerInfo(method.nameIdentifier!!)
+        }
     }
 }

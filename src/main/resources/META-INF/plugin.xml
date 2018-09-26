@@ -23,11 +23,8 @@
         <multiHostInjector implementation="me.nanlou.mybatis.ParamInjector"/>
 
         <!--Interface错误检查-->
-        <annotator language="JAVA"
-                   implementationClass="me.nanlou.mybatis.annotator.InterfaceAnnotator"/>
-        <!--Mapper.xml错误检查-->
-        <annotator language="XML"
-                   implementationClass="me.nanlou.mybatis.annotator.XmlMapperAnnotator"/>
+        <!--<annotator language="JAVA"-->
+                   <!--implementationClass="me.nanlou.mybatis.annotator.InterfaceAnnotator"/>-->
 
         <!--  Interface=>Mapper.xml  -->
         <codeInsight.lineMarkerProvider language="JAVA"
@@ -39,6 +36,15 @@
         <!--Mapper.xml Registry-->
         <dom.fileDescription order="first" implementation="me.nanlou.mybatis.description.MapperDescription"/>
         <projectService serviceImplementation="me.nanlou.mybatis.service.XmlMapperService"/>
+
+
+        <localInspection language="XML" enabledByDefault="true" displayName="Mybatis Mapper Inspection"
+                         groupName="Mybatis" level="ERROR" order="first"
+                         implementationClass="me.nanlou.mybatis.inspection.XmlMapperInspection"/>
+
+        <localInspection language="JAVA" enabledByDefault="true" displayName="Mybatis Interface Inspection"
+                         groupName="Mybatis" level="ERROR" order="first"
+                         implementationClass="me.nanlou.mybatis.inspection.InterfaceInspection"/>
     </extensions>
     <actions>
     </actions>
