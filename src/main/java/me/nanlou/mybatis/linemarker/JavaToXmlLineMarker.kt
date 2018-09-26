@@ -1,30 +1,17 @@
 package me.nanlou.mybatis.linemarker
 
-import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
-import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider
-import com.intellij.codeInsight.daemon.impl.DaemonListeners
-import com.intellij.codeInsight.daemon.impl.LineMarkersPass
-import com.intellij.codeInsight.daemon.impl.LineMarkersPassFactory
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder
-import com.intellij.openapi.components.ServiceManager
-import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.editor.ex.util.EditorUtil
 import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiIdentifier
 import com.intellij.psi.PsiMethod
-import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.xml.XmlToken
-import com.intellij.util.xml.DomService
-import me.nanlou.mybatis.utils.XmlMapperCache
 import me.nanlou.mybatis.dom.Mapper
 import me.nanlou.mybatis.service.XmlMapperService
 import me.nanlou.mybatis.utils.Icons
-import org.jetbrains.kotlin.idea.inspections.findExistingEditor
-import org.jetbrains.kotlin.j2k.getContainingClass
+import java.util.*
 
 /**
  * @author me
@@ -39,18 +26,25 @@ class JavaToXmlLineMarker : RelatedItemLineMarkerProvider() {
         if (element !is PsiIdentifier) {
             return
         }
+        result.addAll(doCollect(element, mapperList))
+    }
+
+
+    private fun doCollect(element: PsiElement, mappers: List<Mapper>): List<RelatedItemLineMarkerInfo<PsiElement>> {
+        val list = LinkedList<RelatedItemLineMarkerInfo<PsiElement>>()
         if (element.parent is PsiClass) {
             val clazz = element.parent as PsiClass
             if (clazz.name == element.text) {
-                mapperList.filter { it.namespace.value == clazz }.forEach { result.add(buildClassLineMarker(clazz, it)) }
+                mappers.filter { it.namespace.value == clazz }.forEach { list.add(buildClassLineMarker(clazz, it)) }
             }
         }
         if (element.parent is PsiMethod) {
-            val clazz = (element.parent as PsiMethod).containingClass ?: return
-            mapperList.asSequence().filter { it.namespace.value == clazz }
-                    .map { buildMethodLineMarker(element.parent as PsiMethod, it) }.toList()
-                    .forEach { result.addAll(it) }
+            val clazz = (element.parent as PsiMethod).containingClass ?: return list
+            mappers.asSequence().filter { it.namespace.value == clazz }
+                    .map { buildMethodLineMarker(element.parent as PsiMethod, it) }
+                    .forEach { list.addAll(it) }
         }
+        return list
     }
 
 
@@ -61,7 +55,7 @@ class JavaToXmlLineMarker : RelatedItemLineMarkerProvider() {
         val builder = NavigationGutterIconBuilder.create(Icons.JAVA_TO_XML_ICON)
                 .setTarget(mapper.xmlTag)
                 .setAlignment(GutterIconRenderer.Alignment.CENTER)
-                .setTooltipText("Navigate to  Mapper Xml:${clazz.name}")
+                .setTooltipText("Navigate to  Mapper Xml:${mapper.xmlTag.containingFile.name}")
         return builder.createLineMarkerInfo(clazz.nameIdentifier!!)
     }
 

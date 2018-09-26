@@ -58,7 +58,7 @@ class XmlToJavaLineMarker : RelatedItemLineMarkerProvider() {
         return NavigationGutterIconBuilder.create(Icons.XML_TO_JAVA_ICON)
                 .setTarget(psiMethod.nameIdentifier)
                 .setAlignment(GutterIconRenderer.Alignment.CENTER)
-                .setTooltipText("Navigate to java method: ${psiMethod.nameIdentifier}")
+                .setTooltipText("Navigate to java method: ${psiMethod.containingClass!!.name}.${psiMethod.name}")
                 .createLineMarkerInfo(xmlToken)
     }
 }
