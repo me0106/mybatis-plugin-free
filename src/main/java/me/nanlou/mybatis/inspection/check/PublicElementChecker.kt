@@ -39,7 +39,7 @@ class PublicElementChecker : XmlChecker {
     //id  不存在检查
     private fun notExistIdCheck(manager: InspectionManager, elements: List<CurdElement>): List<ProblemDescriptor> {
         return elements.asSequence().filter { it.id.value == null }.map { it.id.xmlAttributeValue }
-                .map { manager.createProblemDescriptor(it!!, TextRange(1, it.textLength - 1), "The id: [${it.value}] is non-existent", ProblemHighlightType.ERROR, true, *LocalQuickFix.EMPTY_ARRAY) }
+                .map { manager.createProblemDescriptor(it!!, TextRange(1, it.textLength - 1), "Unresolved method name:[${it.value}]", ProblemHighlightType.ERROR, true, *LocalQuickFix.EMPTY_ARRAY) }
                 .toList()
     }
 

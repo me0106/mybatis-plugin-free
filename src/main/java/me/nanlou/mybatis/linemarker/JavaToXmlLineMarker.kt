@@ -20,8 +20,7 @@ import java.util.*
 class JavaToXmlLineMarker : RelatedItemLineMarkerProvider() {
 
 
-    override fun collectNavigationMarkers(element: PsiElement,
-                                          result: MutableCollection<in RelatedItemLineMarkerInfo<PsiElement>>) {
+    override fun collectNavigationMarkers(element: PsiElement, result: MutableCollection<in RelatedItemLineMarkerInfo<PsiElement>>) {
         val mapperList = XmlMapperService.getInstance(element.project).findMappers(element.project).map { it.rootElement }
         if (element !is PsiIdentifier) {
             return
@@ -32,19 +31,21 @@ class JavaToXmlLineMarker : RelatedItemLineMarkerProvider() {
 
     private fun doCollect(element: PsiElement, mappers: List<Mapper>): List<RelatedItemLineMarkerInfo<PsiElement>> {
         val list = LinkedList<RelatedItemLineMarkerInfo<PsiElement>>()
+        //如果是类标识符
         if (element.parent is PsiClass) {
             val clazz = element.parent as PsiClass
             if (clazz.name == element.text) {
                 mappers.filter { it.namespace.value == clazz }.forEach { list.add(buildClassLineMarker(clazz, it)) }
             }
         }
+        //如果是method标识符
         if (element.parent is PsiMethod) {
             val clazz = (element.parent as PsiMethod).containingClass ?: return list
             mappers.asSequence().filter { it.namespace.value == clazz }
                     .map { buildMethodLineMarker(element.parent as PsiMethod, it) }
-                    .forEach { list.addAll(it) }
+                    .forEach { list.add(it) }
         }
-        return list
+        return list.reversed()
     }
 
 
@@ -63,14 +64,12 @@ class JavaToXmlLineMarker : RelatedItemLineMarkerProvider() {
     /**
      * 添加method->sql跳转
      */
-    private fun buildMethodLineMarker(method: PsiMethod, mapper: Mapper): List<RelatedItemLineMarkerInfo<PsiElement>> {
+    private fun buildMethodLineMarker(method: PsiMethod, mapper: Mapper): RelatedItemLineMarkerInfo<PsiElement> {
         val list = mapper.xmlTag.subTags.filter { it.getAttributeValue("id") == method.name }
-        return list.map {
-            NavigationGutterIconBuilder.create(Icons.JAVA_TO_XML_ICON)
-                    .setTarget(it)
-                    .setAlignment(GutterIconRenderer.Alignment.CENTER)
-                    .setTooltipText("Navigate to  Mapper Statement: ${it.value.text}")
-                    .createLineMarkerInfo(method.nameIdentifier!!)
-        }
+        return NavigationGutterIconBuilder.create(Icons.JAVA_TO_XML_ICON)
+                .setTargets(list)
+                .setAlignment(GutterIconRenderer.Alignment.CENTER)
+                .setTooltipText("Navigate to  Mapper.xml")
+                .createLineMarkerInfo(method.nameIdentifier!!)
     }
 }

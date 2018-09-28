@@ -6,6 +6,7 @@
     </description>
     <depends>org.jetbrains.kotlin</depends>
     <depends>com.intellij.database</depends>
+    <depends>com.intellij.spring</depends>
     <extensions defaultExtensionNs="com.intellij">
         <fileTypeFactory implementation="me.nanlou.param.ParamFileTypeFactory"/>
 
@@ -20,17 +21,16 @@
         <completion.contributor language="Param"
                                 implementationClass="me.nanlou.param.completion.ParamCompletionContributor"/>
 
-        <multiHostInjector implementation="me.nanlou.mybatis.ParamInjector"/>
+        <completion.contributor language="XML"
+                                implementationClass="me.nanlou.mybatis.completion.MethodCompletionContributor"/>
 
-        <!--Interface错误检查-->
-        <!--<annotator language="JAVA"-->
-                   <!--implementationClass="me.nanlou.mybatis.annotator.InterfaceAnnotator"/>-->
+        <multiHostInjector implementation="me.nanlou.mybatis.ParamInjector"/>
 
         <!--  Interface=>Mapper.xml  -->
         <codeInsight.lineMarkerProvider language="JAVA"
                                         implementationClass="me.nanlou.mybatis.linemarker.JavaToXmlLineMarker"/>
 
-        <!-- Mapper.xml=>Interface  -->
+         <!--Mapper.xml=>Interface-->
         <codeInsight.lineMarkerProvider language="XML"
                                         implementationClass="me.nanlou.mybatis.linemarker.XmlToJavaLineMarker"/>
         <!--Mapper.xml Registry-->

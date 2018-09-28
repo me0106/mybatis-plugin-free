@@ -5,12 +5,16 @@ import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder
 import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.psi.PsiElement
-import com.intellij.psi.xml.*
+import com.intellij.psi.xml.XmlFile
+import com.intellij.psi.xml.XmlToken
+import com.intellij.psi.xml.XmlTokenType
 import com.intellij.util.xml.DomUtil
 import me.nanlou.mybatis.dom.Mapper
 import me.nanlou.mybatis.dom.sub.curd.CurdElement
-import me.nanlou.mybatis.utils.*
-import java.lang.ClassCastException
+import me.nanlou.mybatis.utils.Icons
+import me.nanlou.mybatis.utils.MapperUtils
+import me.nanlou.mybatis.utils.MyDomManager
+import me.nanlou.mybatis.utils.addWithReplace
 
 /**
  * @author me
@@ -19,18 +23,42 @@ import java.lang.ClassCastException
 class XmlToJavaLineMarker : RelatedItemLineMarkerProvider() {
 
     companion object {
-        private val list = arrayOf("select", "mapper", "delete", "update", "insert")
+        val statement = arrayOf("insert", "delete", "update", "select")
+        const val MAPPER = "mapper"
     }
 
-    override fun collectNavigationMarkers(element: PsiElement, result: MutableCollection<in RelatedItemLineMarkerInfo<PsiElement>>) {
+    private fun isSupport(element: PsiElement): Boolean {
         if (MapperUtils.isNotMapperXml(element.containingFile)) {
+            return false
+        }
+        if (element !is XmlToken || element.prevSibling !is XmlToken) {
+            return false
+        }
+        if (element.tokenType != XmlTokenType.XML_NAME) {
+            return false
+        }
+        if ((element.prevSibling as XmlToken).tokenType != XmlTokenType.XML_START_TAG_START) {
+            return false
+        }
+        return true
+    }
+
+
+    override fun collectNavigationMarkers(element: PsiElement, result: MutableCollection<in RelatedItemLineMarkerInfo<PsiElement>>) {
+        if (!isSupport(element)) {
             return
         }
         val mapper = MyDomManager.getDomModel(element.containingFile as XmlFile, Mapper::class.java) ?: return
-        val list = DomUtil.getChildrenOf(mapper, CurdElement::class.java)
         try {
-            result.addWithReplace(buildNamespaceLineMaker(mapper, mapper.xmlTag.children[1] as XmlToken))
-            list.map { buildSqlLineMarker(it, it.xmlTag.children[1] as XmlToken) }.forEach { result.addWithReplace(it) }
+            //如果是<mapper/>标签
+            if (element.text == MAPPER) {
+                result.addWithReplace(buildNamespaceLineMaker(mapper, mapper.xmlTag.children[1] as XmlToken))
+            }
+            //如果是<select/>之类的标签
+            if (element.text in statement) {
+                val curdElement = DomUtil.findDomElement(element, CurdElement::class.java) ?: return
+                result.addWithReplace(buildSqlLineMarker(curdElement, element.prevSibling as XmlToken))
+            }
         } catch (e: ClassCastException) {
 
         }
@@ -43,7 +71,7 @@ class XmlToJavaLineMarker : RelatedItemLineMarkerProvider() {
     private fun buildNamespaceLineMaker(mapper: Mapper, xmlToken: XmlToken): RelatedItemLineMarkerInfo<PsiElement>? {
         val clazz = mapper.namespace.value ?: return null
         val builder = NavigationGutterIconBuilder.create(Icons.XML_TO_JAVA_ICON)
-                .setTarget(clazz.nameIdentifier)
+                .setTargets(clazz)
                 .setAlignment(GutterIconRenderer.Alignment.CENTER)
                 .setTooltipText("Navigate to java interface: ${clazz.name}")
         return builder.createLineMarkerInfo(xmlToken)
@@ -56,7 +84,7 @@ class XmlToJavaLineMarker : RelatedItemLineMarkerProvider() {
     private fun buildSqlLineMarker(element: CurdElement, xmlToken: XmlToken): RelatedItemLineMarkerInfo<PsiElement>? {
         val psiMethod = element.id.value ?: return null
         return NavigationGutterIconBuilder.create(Icons.XML_TO_JAVA_ICON)
-                .setTarget(psiMethod.nameIdentifier)
+                .setTargets(psiMethod)
                 .setAlignment(GutterIconRenderer.Alignment.CENTER)
                 .setTooltipText("Navigate to java method: ${psiMethod.containingClass!!.name}.${psiMethod.name}")
                 .createLineMarkerInfo(xmlToken)

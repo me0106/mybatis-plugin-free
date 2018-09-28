@@ -6,7 +6,10 @@ import com.intellij.util.xml.DomManager
 
 object MyDomManager {
 
-    fun <T : DomElement> getDomModel(xmlFile: XmlFile, clazz: Class<T>): T? {
+    fun <T : DomElement> getDomModel(xmlFile: XmlFile?, clazz: Class<T>): T? {
+        if (xmlFile == null) {
+            return null
+        }
         return DomManager.getDomManager(xmlFile.project).getFileElement(xmlFile, clazz)?.rootElement
     }
 

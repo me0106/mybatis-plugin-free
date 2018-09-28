@@ -3,7 +3,7 @@ package me.nanlou.mybatis.dom.sub.curd
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiMethod
 import com.intellij.util.xml.*
-import me.nanlou.mybatis.converter.PsiMethodConverter
+import me.nanlou.mybatis.converter.MethodConverter
 import me.nanlou.mybatis.dom.sub.*
 
 interface CurdElement : DomElement {
@@ -13,7 +13,7 @@ interface CurdElement : DomElement {
     var value: String
 
 
-    @get:Convert(PsiMethodConverter::class)
+    @get:Convert(MethodConverter::class)
     val id: GenericAttributeValue<PsiMethod>
 
 
