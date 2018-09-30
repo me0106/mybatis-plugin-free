@@ -35,15 +35,19 @@ class JavaToXmlLineMarker : RelatedItemLineMarkerProvider() {
         if (element.parent is PsiClass) {
             val clazz = element.parent as PsiClass
             if (clazz.name == element.text) {
-                mappers.filter { it.namespace.value == clazz }.forEach { list.add(buildClassLineMarker(clazz, it)) }
+                val mark = buildClassLineMarker(clazz, mappers.filter { it.namespace.value == clazz })
+                if (mark != null) {
+                    list.add(mark)
+                }
             }
         }
         //如果是method标识符
         if (element.parent is PsiMethod) {
             val clazz = (element.parent as PsiMethod).containingClass ?: return list
-            mappers.asSequence().filter { it.namespace.value == clazz }
-                    .map { buildMethodLineMarker(element.parent as PsiMethod, it) }
-                    .forEach { list.add(it) }
+            val mark = buildMethodLineMarker(element.parent as PsiMethod, mappers.filter { it.namespace.value == clazz })
+            if (mark != null) {
+                list.add(mark)
+            }
         }
         return list.reversed()
     }
@@ -52,11 +56,14 @@ class JavaToXmlLineMarker : RelatedItemLineMarkerProvider() {
     /**
      * 添加Class->namespace跳转
      */
-    private fun buildClassLineMarker(clazz: PsiClass, mapper: Mapper): RelatedItemLineMarkerInfo<PsiElement> {
+    private fun buildClassLineMarker(clazz: PsiClass, list: List<Mapper>): RelatedItemLineMarkerInfo<PsiElement>? {
+        if (list.isEmpty()) {
+            return null
+        }
         val builder = NavigationGutterIconBuilder.create(Icons.JAVA_TO_XML_ICON)
-                .setTarget(mapper.xmlTag)
+                .setTargets(list.map { it.xmlTag })
                 .setAlignment(GutterIconRenderer.Alignment.CENTER)
-                .setTooltipText("Navigate to  Mapper Xml:${mapper.xmlTag.containingFile.name}")
+                .setTooltipText("Navigate to  Mapper Xml")
         return builder.createLineMarkerInfo(clazz.nameIdentifier!!)
     }
 
@@ -64,10 +71,13 @@ class JavaToXmlLineMarker : RelatedItemLineMarkerProvider() {
     /**
      * 添加method->sql跳转
      */
-    private fun buildMethodLineMarker(method: PsiMethod, mapper: Mapper): RelatedItemLineMarkerInfo<PsiElement> {
-        val list = mapper.xmlTag.subTags.filter { it.getAttributeValue("id") == method.name }
+    private fun buildMethodLineMarker(method: PsiMethod, list: List<Mapper>): RelatedItemLineMarkerInfo<PsiElement>? {
+        val xmlList = list.flatMap { it.xmlTag.subTags.toList() }.filter { it.getAttributeValue("id") == method.name }
+        if (xmlList.isEmpty()) {
+            return null
+        }
         return NavigationGutterIconBuilder.create(Icons.JAVA_TO_XML_ICON)
-                .setTargets(list)
+                .setTargets(xmlList)
                 .setAlignment(GutterIconRenderer.Alignment.CENTER)
                 .setTooltipText("Navigate to  Mapper.xml")
                 .createLineMarkerInfo(method.nameIdentifier!!)

@@ -4,6 +4,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiMethod
 import com.intellij.util.xml.*
 import me.nanlou.mybatis.converter.MethodConverter
+import me.nanlou.mybatis.converter.ParameterTypeConverter
 import me.nanlou.mybatis.dom.sub.*
 
 interface CurdElement : DomElement {
@@ -20,6 +21,7 @@ interface CurdElement : DomElement {
     val parameterMap: GenericAttributeValue<String>
 
 
+    @get:Convert(ParameterTypeConverter::class)
     val parameterType: GenericAttributeValue<PsiClass>
 
 

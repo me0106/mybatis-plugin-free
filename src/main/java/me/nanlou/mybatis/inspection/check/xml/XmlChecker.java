@@ -1,4 +1,4 @@
-package me.nanlou.mybatis.inspection.check;
+package me.nanlou.mybatis.inspection.check.xml;
 
 import com.intellij.codeInspection.InspectionManager;
 import com.intellij.codeInspection.ProblemDescriptor;

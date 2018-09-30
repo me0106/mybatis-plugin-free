@@ -1,4 +1,4 @@
-package me.nanlou.mybatis.inspection.check
+package me.nanlou.mybatis.inspection.check.xml
 
 import com.intellij.codeInspection.InspectionManager
 import com.intellij.codeInspection.LocalQuickFix
@@ -26,6 +26,8 @@ class PublicElementChecker : XmlChecker {
         //curd标签list
         val list = DomUtil.getChildrenOf(mapper, CurdElement::class.java)
         val errList = arrayListOf<ProblemDescriptor>()
+
+        errList.addAll(namespaceCheck(mapper, manager))
         errList.addAll(notExistIdCheck(manager, list))
         //获取重复的id
         errList.addAll(duplicateIdCheck(manager, list))
@@ -36,11 +38,44 @@ class PublicElementChecker : XmlChecker {
         return errList
     }
 
+
+    private fun namespaceCheck(mapper: Mapper, manager: InspectionManager): List<ProblemDescriptor> {
+        val clazz = mapper.namespace.value
+        val text = mapper.namespace.xmlAttributeValue?.text.orEmpty()
+        if (mapper.namespace.value == null) {
+            return arrayOf(manager.createProblemDescriptor(mapper.namespace.xmlAttributeValue!!,
+                    create(1, text.length - 1),
+                    "Unresolved class:[$text]",
+                    ProblemHighlightType.ERROR,
+                    true,
+                    *LocalQuickFix.EMPTY_ARRAY)).toList()
+        }
+        return emptyList()
+    }
+
     //id  不存在检查
     private fun notExistIdCheck(manager: InspectionManager, elements: List<CurdElement>): List<ProblemDescriptor> {
-        return elements.asSequence().filter { it.id.value == null }.map { it.id.xmlAttributeValue }
-                .map { manager.createProblemDescriptor(it!!, TextRange(1, it.textLength - 1), "Unresolved method name:[${it.value}]", ProblemHighlightType.ERROR, true, *LocalQuickFix.EMPTY_ARRAY) }
+        return elements.asSequence().filter { it.id.value == null }.map { it.id.xmlAttributeValue }.filter { it != null }
+                .map {
+                    manager.createProblemDescriptor(it!!,
+                            create(1, it.textLength - 1),
+                            "Unresolved method name:[${it.value}]",
+                            ProblemHighlightType.ERROR,
+                            true,
+                            *LocalQuickFix.EMPTY_ARRAY)
+                }
                 .toList()
+    }
+
+    /**
+     * TextRange create with check
+     */
+    val create = { start: Int, end: Int ->
+        if (start - end < 0) {
+            TextRange(start, end)
+        } else {
+            TextRange(0, 0)
+        }
     }
 
 
@@ -52,7 +87,7 @@ class PublicElementChecker : XmlChecker {
                 //获取重复id的string值，并合并为list
                 .filter { it.value > 1 }.map { it.key }
         return elements.asSequence().filter { it.id.stringValue in mulIds }.map { it.id.xmlAttributeValue }
-                .map { manager.createProblemDescriptor(it!!, TextRange(1, it.textLength - 1), "There are multiple duplicate id: ${it.value}", ProblemHighlightType.GENERIC_ERROR, true, *LocalQuickFix.EMPTY_ARRAY) }
+                .map { manager.createProblemDescriptor(it!!, create(1, it.textLength - 1), "There are multiple duplicate id: ${it.value}", ProblemHighlightType.GENERIC_ERROR, true, *LocalQuickFix.EMPTY_ARRAY) }
                 .toList()
     }
 

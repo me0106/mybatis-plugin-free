@@ -1,13 +1,8 @@
 package me.nanlou.mybatis.completion
 
 import com.intellij.codeInsight.completion.*
-import com.intellij.patterns.ElementPattern
+import com.intellij.lang.xml.XMLLanguage
 import com.intellij.patterns.PlatformPatterns
-import com.intellij.patterns.PsiElementPattern
-import com.intellij.patterns.XmlFilePattern
-import com.intellij.psi.xml.XmlAttribute
-import com.intellij.psi.xml.XmlAttributeValue
-import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTokenType
 import com.intellij.util.ProcessingContext
 
@@ -17,9 +12,10 @@ import com.intellij.util.ProcessingContext
  */
 class MethodCompletionContributor : CompletionContributor() {
     init {
-        val patterns = PlatformPatterns.psiElement(XmlAttributeValue::class.java)
-//                .inFile(PlatformPatterns.psiFile(XmlFile::class.java))
-//                .withParent(PlatformPatterns.psiElement(XmlAttribute::class.java))
+        val patterns = PlatformPatterns.psiElement()
+                .withLanguage(XMLLanguage.INSTANCE)
+                .withElementType(XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN)
+//        println("start..")
         extend(CompletionType.BASIC, patterns, Provider())
     }
 
@@ -27,7 +23,7 @@ class MethodCompletionContributor : CompletionContributor() {
     private class Provider : CompletionProvider<CompletionParameters>() {
 
         override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
-            println(parameters)
+//            println(parameters)
         }
     }
 }

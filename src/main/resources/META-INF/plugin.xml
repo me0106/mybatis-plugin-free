@@ -35,6 +35,7 @@
                                         implementationClass="me.nanlou.mybatis.linemarker.XmlToJavaLineMarker"/>
         <!--Mapper.xml Registry-->
         <dom.fileDescription order="first" implementation="me.nanlou.mybatis.description.MapperDescription"/>
+        <!---->
         <projectService serviceImplementation="me.nanlou.mybatis.service.XmlMapperService"/>
 
 
@@ -45,6 +46,7 @@
         <localInspection language="JAVA" enabledByDefault="true" displayName="Mybatis Interface Inspection"
                          groupName="Mybatis" level="ERROR" order="first"
                          implementationClass="me.nanlou.mybatis.inspection.InterfaceInspection"/>
+        <projectService serviceImplementation="me.nanlou.mybatis.service.TypeAliasService"/>
     </extensions>
     <actions>
     </actions>

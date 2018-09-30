@@ -28,7 +28,9 @@ import java.util.regex.Pattern
  */
 class ParamInjector : MultiHostInjector, DumbAware {
     override fun getLanguagesToInject(registrar: MultiHostRegistrar, context: PsiElement) {
-        if (!supportInjectSql(context)) return
+        if (!supportInjectSql(context)) {
+            return
+        }
         injectSql(registrar, context)
     }
 
@@ -40,7 +42,9 @@ class ParamInjector : MultiHostInjector, DumbAware {
         if (MapperUtils.isNotMapperXml(file)) {
             return false
         }
-        if (context !is XmlText) return false
+        if (context !is XmlText) {
+            return false
+        }
         val psi = PsiTreeUtil.getParentOfType(context, XmlTag::class.java, true)
         DomUtil.getDomElement(psi)as? CurdElement ?: return false
         return true

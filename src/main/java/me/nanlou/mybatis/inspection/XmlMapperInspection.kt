@@ -5,7 +5,7 @@ import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.psi.PsiFile
 import com.intellij.psi.xml.XmlFile
-import me.nanlou.mybatis.inspection.check.PublicElementChecker
+import me.nanlou.mybatis.inspection.check.xml.PublicElementChecker
 import me.nanlou.mybatis.dom.Mapper
 import me.nanlou.mybatis.utils.MapperUtils
 import me.nanlou.mybatis.utils.MyDomManager

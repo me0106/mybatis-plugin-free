@@ -28,6 +28,7 @@ class XmlToJavaLineMarker : RelatedItemLineMarkerProvider() {
     }
 
     private fun isSupport(element: PsiElement): Boolean {
+//        是否Mapper.xml文件
         if (MapperUtils.isNotMapperXml(element.containingFile)) {
             return false
         }
@@ -37,6 +38,7 @@ class XmlToJavaLineMarker : RelatedItemLineMarkerProvider() {
         if (element.tokenType != XmlTokenType.XML_NAME) {
             return false
         }
+//      是否标签开始位置
         if ((element.prevSibling as XmlToken).tokenType != XmlTokenType.XML_START_TAG_START) {
             return false
         }
@@ -49,20 +51,15 @@ class XmlToJavaLineMarker : RelatedItemLineMarkerProvider() {
             return
         }
         val mapper = MyDomManager.getDomModel(element.containingFile as XmlFile, Mapper::class.java) ?: return
-        try {
-            //如果是<mapper/>标签
-            if (element.text == MAPPER) {
-                result.addWithReplace(buildNamespaceLineMaker(mapper, mapper.xmlTag.children[1] as XmlToken))
-            }
-            //如果是<select/>之类的标签
-            if (element.text in statement) {
-                val curdElement = DomUtil.findDomElement(element, CurdElement::class.java) ?: return
-                result.addWithReplace(buildSqlLineMarker(curdElement, element.prevSibling as XmlToken))
-            }
-        } catch (e: ClassCastException) {
-
+        //如果是<mapper/>标签
+        if (element.text == MAPPER) {
+            result.addWithReplace(buildNamespaceLineMaker(mapper, mapper.xmlTag.children[1] as XmlToken))
         }
-
+        //如果是<select/>之类的标签
+        if (element.text in statement) {
+            val curdElement = DomUtil.findDomElement(element, CurdElement::class.java) ?: return
+            result.addWithReplace(buildSqlLineMarker(curdElement, element.prevSibling as XmlToken))
+        }
     }
 
     /**
@@ -82,9 +79,11 @@ class XmlToJavaLineMarker : RelatedItemLineMarkerProvider() {
      * 绑定sql->method的跳转
      */
     private fun buildSqlLineMarker(element: CurdElement, xmlToken: XmlToken): RelatedItemLineMarkerInfo<PsiElement>? {
+        val clazz = DomUtil.getParentOfType(element, Mapper::class.java, true)?.namespace?.value
+        val methods = clazz?.methods.orEmpty().filter { it.name == element.id.xmlAttribute?.value }
         val psiMethod = element.id.value ?: return null
         return NavigationGutterIconBuilder.create(Icons.XML_TO_JAVA_ICON)
-                .setTargets(psiMethod)
+                .setTargets(methods)
                 .setAlignment(GutterIconRenderer.Alignment.CENTER)
                 .setTooltipText("Navigate to java method: ${psiMethod.containingClass!!.name}.${psiMethod.name}")
                 .createLineMarkerInfo(xmlToken)
