@@ -1,19 +1,21 @@
 package me.nanlou.mybatis.converter
 
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiReferenceBase
 import com.intellij.psi.xml.XmlAttributeValue
-import com.intellij.util.xml.*
+import com.intellij.util.xml.ConvertContext
+import com.intellij.util.xml.CustomReferenceConverter
+import com.intellij.util.xml.GenericDomValue
+import com.intellij.util.xml.PsiClassConverter
 import me.nanlou.mybatis.service.TypeAliasService
 
 /**
  * @author me
  * @date 2018-09-30 00:58
  */
-class ParameterTypeConverter : PsiClassConverter(), CustomReferenceConverter<PsiClass> {
+open class ParameterTypeConverter : PsiClassConverter(), CustomReferenceConverter<PsiClass> {
     override fun fromString(s: String?, context: ConvertContext): PsiClass? {
         if (s.orEmpty().contains('.')) {
             return super.fromString(s, context)

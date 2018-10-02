@@ -8,9 +8,10 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.util.xml.DomUtil
 import me.nanlou.mybatis.dom.Mapper
 import me.nanlou.mybatis.dom.sub.curd.CurdElement
+import me.nanlou.mybatis.dom.sub.curd.Select
+import me.nanlou.mybatis.dom.sub.resultmap.ResultMap
 import java.util.stream.Collectors
 
-@Suppress("UNUSED_PARAMETER")
 /**
  *
  * 公共部分检查
@@ -33,14 +34,13 @@ class PublicElementChecker : XmlChecker {
         errList.addAll(duplicateIdCheck(manager, list))
         errList.addAll(parameterMapCheck(manager, list))
         errList.addAll(parameterTypeCheck(manager, list))
-        errList.addAll(resultMapCheck(manager, list))
+        errList.addAll(resultMapCheck(manager, mapper))
         errList.addAll(resultTypeCheck(manager, list))
         return errList
     }
 
 
     private fun namespaceCheck(mapper: Mapper, manager: InspectionManager): List<ProblemDescriptor> {
-        val clazz = mapper.namespace.value
         val text = mapper.namespace.xmlAttributeValue?.text.orEmpty()
         if (mapper.namespace.value == null) {
             return arrayOf(manager.createProblemDescriptor(mapper.namespace.xmlAttributeValue!!,
@@ -55,7 +55,10 @@ class PublicElementChecker : XmlChecker {
 
     //id  不存在检查
     private fun notExistIdCheck(manager: InspectionManager, elements: List<CurdElement>): List<ProblemDescriptor> {
-        return elements.asSequence().filter { it.id.value == null }.map { it.id.xmlAttributeValue }.filter { it != null }
+        return elements.asSequence()
+                .filter { it.id.value == null }
+                .map { it.id.xmlAttributeValue }
+                .filter { it != null }
                 .map {
                     manager.createProblemDescriptor(it!!,
                             create(1, it.textLength - 1),
@@ -97,11 +100,37 @@ class PublicElementChecker : XmlChecker {
     }
 
     private fun parameterTypeCheck(manager: InspectionManager, elements: List<CurdElement>): List<ProblemDescriptor> {
-        return emptyList()
+        return elements.asSequence().filter { it.parameterType.value == null }
+                .map { it.parameterType.xmlAttribute }
+                .filter { it != null }
+                .map {
+                    manager.createProblemDescriptor(it!!,
+                            create(1, it.textLength - 1),
+                            "Unresolved method name:[${it.value}]",
+                            ProblemHighlightType.ERROR,
+                            true,
+                            *LocalQuickFix.EMPTY_ARRAY)
+                }.toList()
+
+
     }
 
-    private fun resultMapCheck(manager: InspectionManager, elements: List<CurdElement>): List<ProblemDescriptor> {
-        return emptyList()
+    private fun resultMapCheck(manager: InspectionManager, mapper: Mapper): List<ProblemDescriptor> {
+        val selects = DomUtil.getChildrenOf(mapper, Select::class.java)
+        val resultMaps = DomUtil.getChildrenOf(mapper, ResultMap::class.java)
+                .map { it.xmlTag }
+        return selects.asSequence()
+                .filter { it.resultMap.value !in resultMaps }
+                .map { it.resultMap.xmlAttributeValue }
+                .filter { it != null }
+                .map {
+                    manager.createProblemDescriptor(it!!,
+                            create(1, it.textLength - 1),
+                            "Unresolved resultMap :[${it.value}]",
+                            ProblemHighlightType.ERROR,
+                            true,
+                            *LocalQuickFix.EMPTY_ARRAY)
+                }.toList()
     }
 
     private fun resultTypeCheck(manager: InspectionManager, elements: List<CurdElement>): List<ProblemDescriptor> {

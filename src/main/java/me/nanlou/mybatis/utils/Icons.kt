@@ -14,4 +14,5 @@ object Icons {
     val JAVA_FIELD_ICON = IconLoader.getIcon("/nodes/field.svg")
     val MAPPER_ICON = IconLoader.getIcon("/icons/mybatis/mapper.png")
     val MYBATIS_LOGO=IconLoader.getIcon("/icons/mybatis/mybatis-logo.png")
+    val XML_LOGO=IconLoader.getIcon("/nodes/advice.png")
 }

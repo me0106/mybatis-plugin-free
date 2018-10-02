@@ -4,103 +4,34 @@ package me.nanlou.mybatis.dom.sub.curd
 // DTD/Schema  :    null
 
 
+import com.intellij.psi.PsiClass
+import com.intellij.psi.xml.XmlTag
 import com.intellij.util.xml.*
-import me.nanlou.mybatis.dom.sub.*
+import me.nanlou.mybatis.converter.ResultMapConverter
+import me.nanlou.mybatis.dom.sub.ResultOrdered
+import me.nanlou.mybatis.dom.sub.ResultSetType
 
 /**
  * null:selectElemType interface.
  * @author me
  */
-interface Select : CurdElement {
+interface Select : CurdElement, DomElement {
 
 
-/*    @get:Required
-    var value: String
+    @get:Convert(ResultMapConverter::class)
+    @get:Attribute("resultMap")
+    val resultMap: GenericAttributeValue<XmlTag>
 
 
-    @get:Required
-    val id: GenericAttributeValue<PsiMethod>
-
-
-    val parameterMap: GenericAttributeValue<String>
-
-
-    val parameterType: GenericAttributeValue<String>*/
-
-    val resultMap: GenericAttributeValue<String>
-
-    val resultType: GenericAttributeValue<String>
+    @get:Convert(PsiClassConverter::class)
+    val resultType:GenericAttributeValue<PsiClass>
 
     val resultSetType: GenericAttributeValue<ResultSetType>
-/*
 
-    val statementType: GenericAttributeValue<StatementType>
-
-
-    val fetchSize: GenericAttributeValue<String>
-
-    val timeout: GenericAttributeValue<String>
-
-
-    val flushCache: GenericAttributeValue<FlushCache>
-
-
-    val useCache: GenericAttributeValue<UseCache>
-
-
-    val databaseId: GenericAttributeValue<String>
-
-    val lang: GenericAttributeValue<String>*/
 
     val resultOrdered: GenericAttributeValue<ResultOrdered>
 
     val resultSets: GenericAttributeValue<String>
-/*
-
-    val includes: List<Include>
-
-    val trims: List<Trim>
-
-
-    val wheres: List<GenericDomValue<String>>
-
-
-    val sets: List<GenericDomValue<String>>
-
-
-    val foreaches: List<Foreach>
-
-
-    val chooses: List<Choose>
-
-
-    val ifs: List<If>
-
-
-    val binds: List<Bind>
-
-    fun addInclude(): Include
-
-
-    fun addTrim(): Trim
-
-
-    fun addWhere(): GenericDomValue<String>
-
-
-    fun addSet(): GenericDomValue<String>
-
-
-    fun addForeach(): Foreach
-
-
-    fun addChoose(): Choose
-
-
-    fun addIf(): If
-
-    fun addBind(): Bind
-*/
 
 
 }

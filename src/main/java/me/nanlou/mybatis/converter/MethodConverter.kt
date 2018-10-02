@@ -2,9 +2,10 @@ package me.nanlou.mybatis.converter
 
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
-import com.intellij.psi.*
-import com.intellij.psi.scope.processor.MethodResolveProcessor
-import com.intellij.spring.model.converters.PsiMethodConverter
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiReference
+import com.intellij.psi.PsiReferenceBase
 import com.intellij.util.xml.ConvertContext
 import com.intellij.util.xml.Converter
 import com.intellij.util.xml.CustomReferenceConverter

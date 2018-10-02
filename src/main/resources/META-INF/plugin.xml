@@ -21,8 +21,8 @@
         <completion.contributor language="Param"
                                 implementationClass="me.nanlou.param.completion.ParamCompletionContributor"/>
 
-        <completion.contributor language="XML"
-                                implementationClass="me.nanlou.mybatis.completion.MethodCompletionContributor"/>
+        <!--<completion.contributor language="XML"-->
+                                <!--implementationClass="me.nanlou.mybatis.completion.MethodCompletionContributor"/>-->
 
         <multiHostInjector implementation="me.nanlou.mybatis.ParamInjector"/>
 
