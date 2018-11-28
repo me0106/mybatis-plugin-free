@@ -1,9 +1,11 @@
 <idea-plugin>
     <id>me.nanlou.mybatis-plugin-free</id>
-    <name>Free Mybatis Plugin</name>
+    <version>0.0.1</version>
+    <name>Free Mybatis</name>
     <vendor email="admin@zhouxi.me" url="http://zhouxi.me">= =</vendor>
-    <description>
-    </description>
+    <!--<description>-->
+    <!--hhhhhhhhhhh-->
+    <!--</description>-->
     <depends>org.jetbrains.kotlin</depends>
     <depends>com.intellij.database</depends>
     <depends>com.intellij.spring</depends>
@@ -21,16 +23,13 @@
         <completion.contributor language="Param"
                                 implementationClass="me.nanlou.param.completion.ParamCompletionContributor"/>
 
-        <!--<completion.contributor language="XML"-->
-                                <!--implementationClass="me.nanlou.mybatis.completion.MethodCompletionContributor"/>-->
-
         <multiHostInjector implementation="me.nanlou.mybatis.ParamInjector"/>
 
-        <!--  Interface=>Mapper.xml  -->
+        <!--  Interface => Mapper.xml  -->
         <codeInsight.lineMarkerProvider language="JAVA"
                                         implementationClass="me.nanlou.mybatis.linemarker.JavaToXmlLineMarker"/>
 
-         <!--Mapper.xml=>Interface-->
+        <!--Mapper.xml => Interface-->
         <codeInsight.lineMarkerProvider language="XML"
                                         implementationClass="me.nanlou.mybatis.linemarker.XmlToJavaLineMarker"/>
         <!--Mapper.xml Registry-->
@@ -47,6 +46,12 @@
                          groupName="Mybatis" level="ERROR" order="first"
                          implementationClass="me.nanlou.mybatis.inspection.InterfaceInspection"/>
         <projectService serviceImplementation="me.nanlou.mybatis.service.TypeAliasService"/>
+
+        <psi.referenceContributor language="XML"
+                                  implementation="me.nanlou.mybatis.reference.ResultMapReferenceContributor"/>
+
+        <psi.referenceContributor
+                implementation="me.nanlou.param.contributor.ParamReferenceContributor"/>
     </extensions>
     <actions>
     </actions>

@@ -43,9 +43,8 @@ open class ResultMapConverter : Converter<XmlTag>(), CustomReferenceConverter<Xm
             return mapper.resultMaps.map { builder(it.id.value.orEmpty()) }.toTypedArray()
         }
 
-
-        private fun builder(id: String): LookupElement {
-            return LookupElementBuilder.create(id).bold().withIcon(Icons.XML_LOGO)
+        val builder = { id: String ->
+            LookupElementBuilder.create(id).bold().withIcon(Icons.XML_LOGO)
         }
     }
 }

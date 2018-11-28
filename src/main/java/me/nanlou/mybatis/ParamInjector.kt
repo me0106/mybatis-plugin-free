@@ -93,25 +93,3 @@ class ParamInjector : MultiHostInjector, DumbAware {
         return listOf(PsiElement::class.java)
     }
 }
-//
-//fun main(args: Array<String>) {
-//
-//
-//    println(getPattern("\n SELECT * FROM #{} WHERE NAME LIKE #{a} #{} #{} \n"))
-//
-//}
-//data class TextRange1(val s:Int,val e:Int)
-//private fun getPattern(str: String): List<TextRange1> {
-//    val pattern = Pattern.compile("[#$]\\{.*?}")!!
-//    val matcher = pattern.matcher(str)
-//    val list = ArrayList<TextRange1>()
-//    var start = 0
-//    while (matcher.find()) {
-//        val target = matcher.group()
-//        start = str.indexOf(target, start)
-//        list.add(TextRange1(start, start + target.length))
-//        start += target.length
-//    }
-//    return list
-//
-//}

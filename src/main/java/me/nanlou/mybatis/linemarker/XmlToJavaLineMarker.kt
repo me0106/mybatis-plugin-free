@@ -53,7 +53,7 @@ class XmlToJavaLineMarker : RelatedItemLineMarkerProvider() {
         val mapper = MyDomManager.getDomModel(element.containingFile as XmlFile, Mapper::class.java) ?: return
         //如果是<mapper/>标签
         if (element.text == MAPPER) {
-            result.addWithReplace(buildNamespaceLineMaker(mapper, mapper.xmlTag.children[1] as XmlToken))
+            result.addWithReplace(buildNamespaceLineMaker(mapper, mapper.xmlTag!!.children[1] as XmlToken))
         }
         //如果是<select/>之类的标签
         if (element.text in statement) {

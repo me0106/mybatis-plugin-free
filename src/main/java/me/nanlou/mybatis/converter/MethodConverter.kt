@@ -40,9 +40,8 @@ open class MethodConverter : Converter<PsiMethod>(), CustomReferenceConverter<Ps
         }
 
         override fun getVariants(): Array<Any> {
-            val file = context?.file
-            val clazz = MyDomManager.getDomModel(file, Mapper::class.java)?.namespace?.value ?: return emptyArray()
-            return clazz.methods.map { builder(it) }.toTypedArray()
+            val clazz = MyDomManager.getDomModel(context?.file, Mapper::class.java)?.namespace?.value
+            return clazz?.methods.orEmpty().map { builder(it) }.toTypedArray()
         }
 
         private fun builder(method: PsiMethod): LookupElement {

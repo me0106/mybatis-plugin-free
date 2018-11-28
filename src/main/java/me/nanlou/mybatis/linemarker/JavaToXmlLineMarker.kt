@@ -72,7 +72,7 @@ class JavaToXmlLineMarker : RelatedItemLineMarkerProvider() {
      * 添加method->sql跳转
      */
     private fun buildMethodLineMarker(method: PsiMethod, list: List<Mapper>): RelatedItemLineMarkerInfo<PsiElement>? {
-        val xmlList = list.flatMap { it.xmlTag.subTags.toList() }.filter { it.getAttributeValue("id") == method.name }
+        val xmlList = list.flatMap { it.xmlTag!!.subTags.toList() }.filter { it.getAttributeValue("id") == method.name }
         if (xmlList.isEmpty()) {
             return null
         }
