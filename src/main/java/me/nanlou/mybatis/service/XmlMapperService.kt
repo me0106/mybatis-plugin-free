@@ -36,6 +36,4 @@ class XmlMapperService(val project: Project) {
             return ServiceManager.getService(project, XmlMapperService::class.java)
         }
     }
-
-
 }

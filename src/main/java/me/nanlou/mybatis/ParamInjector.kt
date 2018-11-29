@@ -46,7 +46,7 @@ class ParamInjector : MultiHostInjector, DumbAware {
             return false
         }
         val psi = PsiTreeUtil.getParentOfType(context, XmlTag::class.java, true)
-        DomUtil.getDomElement(psi)as? CurdElement ?: return false
+        if (DomUtil.getDomElement(psi) !is CurdElement) return false
         return true
     }
 

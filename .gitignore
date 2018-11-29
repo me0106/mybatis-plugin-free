@@ -4,3 +4,5 @@
 build/
 out/
 src/test/
+idea-flex.skeleton
+jflex-1.7.0.jar

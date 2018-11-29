@@ -41,14 +41,22 @@ class PublicElementChecker : XmlChecker {
 
 
     private fun namespaceCheck(mapper: Mapper, manager: InspectionManager): List<ProblemDescriptor> {
+        if (mapper.namespace.xmlAttribute == null) {
+            return listOf(manager.createProblemDescriptor(mapper.xmlElement!!,
+                    create(1, mapper.xmlElement!!.text.length - 1),
+                    "require attribute [namespace]",
+                    ProblemHighlightType.GENERIC_ERROR,
+                    true,
+                    *LocalQuickFix.EMPTY_ARRAY))
+        }
         val text = mapper.namespace.xmlAttributeValue?.text.orEmpty()
         if (mapper.namespace.value == null) {
-            return arrayOf(manager.createProblemDescriptor(mapper.namespace.xmlAttributeValue!!,
+            return listOf(manager.createProblemDescriptor(mapper.namespace.xmlAttributeValue!!,
                     create(1, text.length - 1),
                     "Unresolved class:[$text]",
                     ProblemHighlightType.ERROR,
                     true,
-                    *LocalQuickFix.EMPTY_ARRAY)).toList()
+                    *LocalQuickFix.EMPTY_ARRAY))
         }
         return emptyList()
     }
